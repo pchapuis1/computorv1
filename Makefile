@@ -1,22 +1,38 @@
-NAME		= computor
+NAME        = computor
 
-CC			= c++
+CC          = c++
+RM          = rm -rf
 
-RM 			= rm -rf
+FLAGS       = -Wall -Wextra -Werror -std=c++98 -Iinclude
 
-FLAGS		= -Wall -Wextra -Werror -std=c++98
+OBJDIR      = .objs
+SRCDIR      = src
+INCDIR      = include
 
-all:		${NAME}
+FILES       = main PolynomialSolver
 
-${NAME}: 	main.cpp
-			${CC} ${FLAGS} main.cpp -o ${NAME}
+SRC         = $(addprefix $(SRCDIR)/, $(FILES:=.cpp))
+OBJS        = $(addprefix $(OBJDIR)/, $(FILES:=.o))
+
+HEADERS     = PolynomialSolver.hpp
+
+all:        $(OBJDIR) $(NAME)
+
+$(OBJDIR):
+			mkdir $(OBJDIR)
+
+$(NAME):    $(OBJS)
+			$(CC) $(OBJS) -o $(NAME)
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(addprefix $(INCDIR)/, $(HEADERS))
+			$(CC) $(FLAGS) -c $< -o $@
 
 clean:
-			${RM}
+			$(RM) $(OBJDIR)
 
-fclean:		clean
-			${RM} ${NAME}
+fclean:     clean
+			$(RM) $(NAME)
 
-re:			fclean all
+re:         fclean all
 
-.PHONY:		all clean fclean re
+.PHONY:     all clean fclean re
