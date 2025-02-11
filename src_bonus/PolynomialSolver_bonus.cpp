@@ -1,4 +1,4 @@
-#include "../include/PolynomialSolver.hpp"
+#include "../include/PolynomialSolverBonus.hpp"
 
 PolynomialSolver::PolynomialSolver(const std::string& equation) {
     parse_equation(equation);
@@ -90,7 +90,7 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
 }
 
 void PolynomialSolver::print_reduce_form() {
-    std::cout << "Reduced form: ";
+    std::cout << MAGENTA << "Reduced form: " << RESET;
 
     std::map<int, double>::const_iterator it = coefficients.begin();
     bool first = true;
@@ -141,7 +141,7 @@ int PolynomialSolver::get_polynomial_degree(bool print) {
         // max_degree = coefficients.rbegin()->first;
     // else
     if (print)
-        std::cout << "Polynomial degree: " << max_degree << std::endl;
+        std::cout << GREEN << "Polynomial degree: " << RESET << max_degree << std::endl;
     return max_degree;
 }
 
@@ -162,7 +162,7 @@ double mySqrt(double delta) {
 void PolynomialSolver::solve_equation() {
     int degree = get_polynomial_degree(true);
 
-    if (degree > 2){
+    if (degree > 2) {
         std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
         return ;
     }
@@ -172,11 +172,11 @@ void PolynomialSolver::solve_equation() {
         double a = coefficients[1];
         double b = coefficients[0];
         // std::cout << "a: " << a << " b: " << b << std::endl;
-        // if (a == 0) {
-        //     std::cout << "No solution, a cannot be zero in a first degree equation." << std::endl;
-        //     return ;
-        // }
-        std::cout << "The solution is:" << std::endl << -b / a << std::endl;
+        std::cout << "The solution is:" << std::endl;
+        std::cout << CYAN << "x = " << RESET << RED << "-b / a" << RESET << std::endl;
+        std::cout << CYAN << "x = " << RESET << RED << "-" << b << " / " << a << RESET << std::endl;
+        std::cout << CYAN << "x = " << RESET << RED << -b / a << RESET << std::endl;
+        std::cout << "The solution is x = " << RED << -b / a << RESET << std::endl;
     }
     else if (degree == 2) {
         double a = coefficients[2];
@@ -184,17 +184,28 @@ void PolynomialSolver::solve_equation() {
         double c = coefficients[0];
         double delta = b * b - 4 * a * c;
         
+        std::cout << YELLOW << "The discriminant value is: " << RESET << delta << std::endl;
         if (delta < 0) {
-            std::cout << "The discriminant is negative, there is no solutions." << std::endl;
+            std::cout << YELLOW << "The discriminant is negative, there is no solutions." << RESET << std::endl;
         }
         else if (delta == 0) {
-            std::cout << "The discriminant is null, the unique solution is:" << std::endl << (-b / (2 * a)) << std::endl;
+            double x1 = (-b / (2 * a));
+            std::cout << YELLOW << "The discriminant is null, the unique solution is:" << RESET << std::endl;
+            std::cout << CYAN << "x1" << RESET << " = " << RED << "-b / (2 * a)" << RESET<< std::endl;
+            std::cout << CYAN << "x1" << RESET << " = " << RED << "-" << b << " / (2 * " << a << ")" << RESET << std::endl;
+            std::cout << CYAN << "x1" << RESET << " = " << RED << x1 << RESET << std::endl;
+            std::cout << "The unique solution is " << CYAN << "x1" << RESET << " = " << RED << x1 << RESET << "." << std::endl;
+
         }
         else {
-            // std::cout << "a: " << a << " b: " << b << " c: " << c << " delta: " << delta << " sqrt delta: " << mySqrt(delta) << std::endl;
-            std::cout << "Discriminant is strictly positive, the two solutions are:" << std::endl;
-            std::cout << (-b - mySqrt(delta)) / (2 * a) << std::endl;
-            std::cout << (-b + mySqrt(delta)) / (2 * a) << std::endl;
+            double x1 = (-b + mySqrt(delta)) / (2 * a);
+            double x2 = (-b - mySqrt(delta)) / (2 * a);
+
+            std::cout << YELLOW << "Discriminant is strictly positive, the two solutions are:" << RESET << std::endl;
+            std::cout << CYAN << "x1" << RESET << " = " << RED << "(-b + sqrt(delta)) / (2 * a)" << RESET << " | " << CYAN << "x2" << RESET << " = " << RED << "(-b - sqrt(delta)) / (2 * a)" << RESET << std::endl;
+            std::cout << CYAN << "x1" << RESET << " = " << RED << "(-" << b << " + sqrt(" << delta << ")) / (2 * " << a << ")" << RESET << " | " << CYAN << "x2" << RESET << " = " << RED << "(-" << b << " - sqrt(" << delta << ")) / (2 * " << a << ")" << RESET << std::endl;
+            std::cout << CYAN << "x1" << RESET << " = " << RED << x1 << RESET << " | " << CYAN << "x2" << RESET << " = " << RED << x2 << RESET << std::endl;
+            std::cout << "The two solutions are " << CYAN << "x1" << RESET << " = " << RED << x1 << RESET << " and " << CYAN << "x2" << RESET << " = " << RED << x2 << RESET << "." << std::endl;
         }
     }
     return;
