@@ -113,18 +113,35 @@ void PolynomialSolver::print_reduce_form() {
         }
         ++it;
     }
+    if (!get_polynomial_degree(false) && coefficients[0] == 0)
+        std::cout << "0";
     std::cout << " = 0" << std::endl;
+    // std::cout << "degree: " << get_polynomial_degree(false) << std::endl;
     return ;
 }
 
-int PolynomialSolver::get_polynomial_degree() {
+int PolynomialSolver::get_polynomial_degree(bool print) {
+    std::map<int, double>::reverse_iterator it;
     int max_degree;
+    // double max_degree_coeff;
 
-    if (!coefficients.empty())
-        max_degree = coefficients.rbegin()->first;
+    if (!coefficients.empty()){
+        // max_degree = coefficients.rbegin()->first;
+        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {
+            // std::cout << "\n firdt: " << it->first << " " << it->second << std::endl;
+            // max_degree_coeff = it->second;
+        }
+        max_degree = it->first;
+    }
     else
-        max_degree = 0;
-    std::cout << "Polynomial degree: " << max_degree << std::endl;
+        max_degree = -1;
+    // if (max_degree_coeff == 0)
+        // max_degree = 0
+    // if (!coefficients.empty())
+        // max_degree = coefficients.rbegin()->first;
+    // else
+    if (print)
+        std::cout << "Polynomial degree: " << max_degree << std::endl;
     return max_degree;
 }
 
@@ -143,7 +160,7 @@ double mySqrt(double delta) {
 }
 
 void PolynomialSolver::solve_equation() {
-    int degree = get_polynomial_degree();
+    int degree = get_polynomial_degree(true);
 
     if (degree > 2)
         std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
@@ -153,6 +170,7 @@ void PolynomialSolver::solve_equation() {
     else if (degree == 1) {
         double a = coefficients[1];
         double b = coefficients[0];
+        // std::cout << "a: " << a << " b: " << b << std::endl;
         std::cout << "The solution is:" << std::endl << -b / a << std::endl;
     }
     else if (degree == 2) {
