@@ -1,3 +1,4 @@
 *.exe
 .vscode
 .objs
+.objs_bonus
