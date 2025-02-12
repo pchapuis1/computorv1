@@ -23,29 +23,59 @@ void PolynomialSolver::parse_equation(const std::string& equation) {
 }
 
 void PolynomialSolver::extract_coefficient(std::string term, int sign) {
-    double coefficient;
-    int exponent;
-    size_t i = 0;
+    double      coefficient;
     std::string coefficient_str;
+    int         exponent;
+    std::string exponent_str;
+    size_t i = 0;
 
     if (term[i] == '-'){
         sign *= -1;
         i ++;
     }
-    coefficient_str = term.substr(i, term.find('*') - i);
-    coefficient = std::atof(coefficient_str.c_str());
 
-    exponent = term[term.length() - 1] - '0';
+    //get number (coefficient) -> look the last position of the number and if no number then => 1
+    size_t  j = i;
+    bool    dot = false;
+    while ((term[j] >= '0' && term[j] <= '9') || (term[j] == '.' && dot == false)){
+        if (term[j] == '.')
+            dot = true;
+        j ++;
+    }
+    if (j == i)
+        coefficient = 1;
+    else {
+        coefficient_str = term.substr(i, j - i);
+        coefficient = std::atof(coefficient_str.c_str());
+    }
 
+    //with last pos of number -> if nothing next => exponent = 0
+    //  -> if X and nothing next => exponent = 1
+    //  -> if X^ look for numbers next
+    if (j == term.length())
+        exponent = 0;
+    else {
+        j = term.length() - 1;
+        while ((term[j] >= '0' && term[j] <= '9')){
+            j --;
+        }
+        if (term[j] == 'X')
+            exponent = 1;
+        else {
+            exponent_str = term.substr(j + 1, term.length() - 1);
+            // std::cout << "exponent_str: " << exponent_str << std::endl;
+            exponent = std::atof(exponent_str.c_str());
+
+        }
+    }
     coefficients[exponent] += sign * coefficient;
     // std::cout << "Term: " << term << std::endl;
-    // std::cout << coefficient_str << std::endl;
+    // std::cout << "coefficient: " << coefficient << std::endl;
+    // std::cout << "exponent: " << exponent << std::endl;
     return;
 }
 
 void PolynomialSolver::get_coefficients(std::string member, int sign) {
-    (void)sign;
-    std::vector<std::string> terms;
     std::string member_without_space;
     std::string terme;
     
@@ -55,8 +85,6 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
         }
     }
 
-    // std::cout << "member clear:" << member_without_space << std::endl;
-
     for (size_t i = 0; i < member_without_space.length(); ++i) {
         if (terme.empty()) {
             terme += member_without_space[i];
@@ -65,12 +93,10 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
 
         if (member_without_space[i] == '-') {
             extract_coefficient(terme, sign);
-            terms.push_back(terme);
             terme = member_without_space[i];
         } 
         else if (member_without_space[i] == '+') {
             extract_coefficient(terme, sign);
-            terms.push_back(terme);
             terme = "";
         } 
         else
@@ -79,13 +105,7 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
     
     if (!terme.empty()) {
         extract_coefficient(terme, sign);
-        terms.push_back(terme);
     }
-
-    // for (std::map<int, double>::const_iterator it = coefficients.begin(); it != coefficients.end(); ++it) {
-    //     std::cout << "exponent: " << it->first << " coefficient: " << it->second << std::endl;
-    // }
-
     return;
 }
 
@@ -108,7 +128,12 @@ void PolynomialSolver::print_reduce_form() {
                     coefficient = -coefficient;
                 }
             }
-            std::cout << coefficient << " * X^" << exponent;
+            if (exponent == 0)
+                std::cout << coefficient;
+            else if (exponent == 1)
+                std::cout << coefficient << " * X";
+            else
+                std::cout << coefficient << " * X^" << exponent;
             first = false;
         }
         ++it;
@@ -116,30 +141,19 @@ void PolynomialSolver::print_reduce_form() {
     if (!get_polynomial_degree(false) && coefficients[0] == 0)
         std::cout << "0";
     std::cout << " = 0" << std::endl;
-    // std::cout << "degree: " << get_polynomial_degree(false) << std::endl;
     return ;
 }
 
 int PolynomialSolver::get_polynomial_degree(bool print) {
     std::map<int, double>::reverse_iterator it;
     int max_degree;
-    // double max_degree_coeff;
 
     if (!coefficients.empty()){
-        // max_degree = coefficients.rbegin()->first;
-        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {
-            // std::cout << "\n firdt: " << it->first << " " << it->second << std::endl;
-            // max_degree_coeff = it->second;
-        }
+        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {}
         max_degree = it->first;
     }
     else
         max_degree = -1;
-    // if (max_degree_coeff == 0)
-        // max_degree = 0
-    // if (!coefficients.empty())
-        // max_degree = coefficients.rbegin()->first;
-    // else
     if (print)
         std::cout << GREEN << "Polynomial degree: " << RESET << max_degree << std::endl;
     return max_degree;

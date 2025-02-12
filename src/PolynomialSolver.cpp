@@ -23,10 +23,11 @@ void PolynomialSolver::parse_equation(const std::string& equation) {
 }
 
 void PolynomialSolver::extract_coefficient(std::string term, int sign) {
-    double coefficient;
-    int exponent;
-    size_t i = 0;
+    double      coefficient;
     std::string coefficient_str;
+    int         exponent;
+    std::string exponent_str;
+    size_t i = 0;
 
     if (term[i] == '-'){
         sign *= -1;
@@ -35,7 +36,12 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
     coefficient_str = term.substr(i, term.find('*') - i);
     coefficient = std::atof(coefficient_str.c_str());
 
-    exponent = term[term.length() - 1] - '0';
+    size_t j = term.length() - 1;
+    while ((term[j] >= '0' && term[j] <= '9')){
+        j --;
+    }
+    exponent_str = term.substr(j + 1, term.length() - 1);
+    exponent = std::atof(exponent_str.c_str());
 
     coefficients[exponent] += sign * coefficient;
     // std::cout << "Term: " << term << std::endl;
