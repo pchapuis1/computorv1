@@ -27,12 +27,13 @@ private:
     void    extract_coefficient (std::string term, int sign);
     int     get_polynomial_degree(bool print);
     void    print_result();
+    int     check_term(const std::string& term);
 
 public:
     PolynomialSolver(const std::string& equation);
 
-    void print_reduce_form();
-    void solve_equation();
+    void    print_reduce_form();
+    void    solve_equation();
 };
 
 #endif

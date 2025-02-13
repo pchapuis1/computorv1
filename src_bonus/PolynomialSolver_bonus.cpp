@@ -59,7 +59,7 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
         while ((term[j] >= '0' && term[j] <= '9')){
             j --;
         }
-        if (term[j] == 'X')
+        if (term[j] == 'X' || term[j] == 'x')
             exponent = 1;
         else {
             exponent_str = term.substr(j + 1, term.length() - 1);
@@ -73,6 +73,76 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
     // std::cout << "coefficient: " << coefficient << std::endl;
     // std::cout << "exponent: " << exponent << std::endl;
     return;
+}
+
+int nbIterationOrPos(const std::string& term, char to_find) {
+    int pos = 0;
+    int nb = 0;
+
+    for (size_t i = 0; i < term.length(); i ++) {
+        if (term[i] == to_find){
+            nb ++;
+            pos = i;
+        }
+    }
+    if (nb == 0)
+        return -1;
+    if (nb > 1)
+        return (-2);
+    else
+        return (pos);
+}
+
+int PolynomialSolver::check_term(const std::string& term) {
+    int nb_minus = nbIterationOrPos(term, '-');
+    int nb_dot = nbIterationOrPos(term, '.');
+    int nb_x = nbIterationOrPos(term, 'x');
+    int nb_X = nbIterationOrPos(term, 'X');
+    int nb_x_abs;
+    int nb_caret = nbIterationOrPos(term, '^');
+
+
+// check nb minus and minus pos
+    if (nb_minus == -2 || nb_minus > 0) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
+// check nb x or X
+    if ((nb_X >= 0 && nb_x >= 0) || nb_x == -2 || nb_X == -2) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
+    if (nb_X >= 0)
+        nb_x_abs = nb_X;
+    else
+        nb_x_abs = nb_x;
+// check nb ^
+    if (nb_caret == -2) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
+// check pos of ^ compare to X
+    if (nb_caret >= 0 && (nb_x_abs == -1 || nb_caret - nb_x_abs != 1)) {
+        if (nb_x_abs == -1) {
+            std::cout << "Error in term: " << term << std::endl;
+            return 1;
+        }
+        if (nb_caret - nb_x_abs != 1) {
+            std::cout << "Error in term: " << term << std::endl;
+            return 1;
+        }
+
+    }
+    // check nb . et pos . compare to x
+    if (nb_dot == -2 || (nb_dot >= 0 && nb_x_abs >= 0 && (nb_x_abs - nb_dot < 0))) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
+    if (nb_dot == 0 || (nb_dot > 0 && (term[nb_dot - 1] < '0' || term[nb_dot - 1] > '9' || term[nb_dot + 1] < '0' || term[nb_dot + 1] > '9'))) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
+    return 0;
 }
 
 void PolynomialSolver::get_coefficients(std::string member, int sign) {
@@ -92,10 +162,14 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
         }
 
         if (member_without_space[i] == '-') {
+            if (check_term(terme))
+                exit (0);
             extract_coefficient(terme, sign);
             terme = member_without_space[i];
         } 
         else if (member_without_space[i] == '+') {
+            if (check_term(terme))
+                exit (0);
             extract_coefficient(terme, sign);
             terme = "";
         } 
@@ -104,6 +178,8 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
     }
     
     if (!terme.empty()) {
+        if (check_term(terme))
+            exit (0);
         extract_coefficient(terme, sign);
     }
     return;
