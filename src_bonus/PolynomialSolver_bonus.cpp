@@ -133,6 +133,10 @@ int PolynomialSolver::check_term(const std::string& term) {
         }
 
     }
+    if (nb_caret == -1 && nb_x_abs >= 0 && nb_x_abs != static_cast<int>(term.length()) -1) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
     // check nb . et pos . compare to x
     if (nb_dot == -2 || (nb_dot >= 0 && nb_x_abs >= 0 && (nb_x_abs - nb_dot < 0))) {
         std::cout << "Error in term: " << term << std::endl;
