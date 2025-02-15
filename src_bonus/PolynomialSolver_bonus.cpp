@@ -4,11 +4,34 @@ PolynomialSolver::PolynomialSolver(const std::string& equation) {
     parse_equation(equation);
 }
 
+int nbIterationOrPos(const std::string& term, char to_find) {
+    int pos = 0;
+    int nb = 0;
+
+    for (size_t i = 0; i < term.length(); i ++) {
+        if (term[i] == to_find){
+            nb ++;
+            pos = i;
+        }
+    }
+    if (nb == 0)
+        return -1;
+    if (nb > 1)
+        return (-2);
+    else
+        return (pos);
+}
+
 void PolynomialSolver::parse_equation(const std::string& equation) {
     size_t equalPos;
     std::string leftMember;
     std::string rightMember;
+    int nb_equal = nbIterationOrPos(equation, '=');
 
+    if (nb_equal == -2) {
+        std::cout << "Error: only one equal is needed." << std::endl;
+        exit (0);
+    }
     equalPos = equation.find('=');
     if (equalPos == std::string::npos) {
         std::cout << "An '=' is needed." << std::endl;
@@ -75,33 +98,19 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
     return;
 }
 
-int nbIterationOrPos(const std::string& term, char to_find) {
-    int pos = 0;
-    int nb = 0;
-
-    for (size_t i = 0; i < term.length(); i ++) {
-        if (term[i] == to_find){
-            nb ++;
-            pos = i;
-        }
-    }
-    if (nb == 0)
-        return -1;
-    if (nb > 1)
-        return (-2);
-    else
-        return (pos);
-}
-
 int PolynomialSolver::check_term(const std::string& term) {
     int nb_minus = nbIterationOrPos(term, '-');
+    int nb_asterisk = nbIterationOrPos(term, '*');
     int nb_dot = nbIterationOrPos(term, '.');
     int nb_x = nbIterationOrPos(term, 'x');
     int nb_X = nbIterationOrPos(term, 'X');
     int nb_x_abs;
     int nb_caret = nbIterationOrPos(term, '^');
 
-
+    if (nb_asterisk == -2) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
 // check nb minus and minus pos
     if (nb_minus == -2 || nb_minus > 0) {
         std::cout << "Error in term: " << term << std::endl;
@@ -116,8 +125,13 @@ int PolynomialSolver::check_term(const std::string& term) {
         nb_x_abs = nb_X;
     else
         nb_x_abs = nb_x;
+    if (nb_asterisk >=0 && nb_asterisk + 1 != nb_x_abs) {
+        std::cout << "Error in term: " << term << std::endl;
+        return 1;
+    }
+
 // check nb ^
-    if (nb_caret == -2) {
+    if (nb_caret == -2 || nb_caret == static_cast<int>(term.length()) -1) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
@@ -131,7 +145,10 @@ int PolynomialSolver::check_term(const std::string& term) {
             std::cout << "Error in term: " << term << std::endl;
             return 1;
         }
-
+        if (term[nb_caret] ) {
+            std::cout << "Error in term: " << term << std::endl;
+            return 1;
+        }
     }
     if (nb_caret == -1 && nb_x_abs >= 0 && nb_x_abs != static_cast<int>(term.length()) -1) {
         std::cout << "Error in term: " << term << std::endl;
