@@ -44,8 +44,6 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
     exponent = std::atof(exponent_str.c_str());
 
     coefficients[exponent] += sign * coefficient;
-    // std::cout << "Term: " << term << std::endl;
-    // std::cout << coefficient_str << std::endl;
     return;
 }
 
@@ -60,8 +58,6 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
             member_without_space += member[i];
         }
     }
-
-    // std::cout << "member clear:" << member_without_space << std::endl;
 
     for (size_t i = 0; i < member_without_space.length(); ++i) {
         if (terme.empty()) {
@@ -87,11 +83,6 @@ void PolynomialSolver::get_coefficients(std::string member, int sign) {
         extract_coefficient(terme, sign);
         terms.push_back(terme);
     }
-
-    // for (std::map<int, double>::const_iterator it = coefficients.begin(); it != coefficients.end(); ++it) {
-    //     std::cout << "exponent: " << it->first << " coefficient: " << it->second << std::endl;
-    // }
-
     return;
 }
 
@@ -105,47 +96,34 @@ void PolynomialSolver::print_reduce_form() {
         int exponent = it->first;
         double coefficient = it->second;
 
-        if (coefficient != 0) {
-            if (!first) {
-                if (coefficient > 0)
-                    std::cout << " + ";
-                else {
-                    std::cout << " - ";
-                    coefficient = -coefficient;
-                }
+        if (!first) {
+            if (coefficient >= 0)
+                std::cout << " + ";
+            else {
+                std::cout << " - ";
+                coefficient = -coefficient;
             }
-            std::cout << coefficient << " * X^" << exponent;
-            first = false;
         }
+        std::cout << coefficient << " * X^" << exponent;
+        first = false;
         ++it;
     }
     if (!get_polynomial_degree(false) && coefficients[0] == 0)
         std::cout << "0";
     std::cout << " = 0" << std::endl;
-    // std::cout << "degree: " << get_polynomial_degree(false) << std::endl;
     return ;
 }
 
 int PolynomialSolver::get_polynomial_degree(bool print) {
     std::map<int, double>::reverse_iterator it;
     int max_degree;
-    // double max_degree_coeff;
 
     if (!coefficients.empty()){
-        // max_degree = coefficients.rbegin()->first;
-        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {
-            // std::cout << "\n firdt: " << it->first << " " << it->second << std::endl;
-            // max_degree_coeff = it->second;
-        }
+        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {}
         max_degree = it->first;
     }
     else
         max_degree = -1;
-    // if (max_degree_coeff == 0)
-        // max_degree = 0
-    // if (!coefficients.empty())
-        // max_degree = coefficients.rbegin()->first;
-    // else
     if (print)
         std::cout << "Polynomial degree: " << max_degree << std::endl;
     return max_degree;
@@ -177,11 +155,6 @@ void PolynomialSolver::solve_equation() {
     else if (degree == 1) {
         double a = coefficients[1];
         double b = coefficients[0];
-        // std::cout << "a: " << a << " b: " << b << std::endl;
-        // if (a == 0) {
-        //     std::cout << "No solution, a cannot be zero in a first degree equation." << std::endl;
-        //     return ;
-        // }
         std::cout << "The solution is:" << std::endl << -b / a << std::endl;
     }
     else if (degree == 2) {
@@ -197,7 +170,6 @@ void PolynomialSolver::solve_equation() {
             std::cout << "The discriminant is null, the unique solution is:" << std::endl << (-b / (2 * a)) << std::endl;
         }
         else {
-            // std::cout << "a: " << a << " b: " << b << " c: " << c << " delta: " << delta << " sqrt delta: " << mySqrt(delta) << std::endl;
             std::cout << "Discriminant is strictly positive, the two solutions are:" << std::endl;
             std::cout << (-b - mySqrt(delta)) / (2 * a) << std::endl;
             std::cout << (-b + mySqrt(delta)) / (2 * a) << std::endl;

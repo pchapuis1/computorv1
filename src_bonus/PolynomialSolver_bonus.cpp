@@ -57,7 +57,6 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
         i ++;
     }
 
-    //get number (coefficient) -> look the last position of the number and if no number then => 1
     size_t  j = i;
     bool    dot = false;
     while ((term[j] >= '0' && term[j] <= '9') || (term[j] == '.' && dot == false)){
@@ -72,9 +71,6 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
         coefficient = std::atof(coefficient_str.c_str());
     }
 
-    //with last pos of number -> if nothing next => exponent = 0
-    //  -> if X and nothing next => exponent = 1
-    //  -> if X^ look for numbers next
     if (j == term.length())
         exponent = 0;
     else {
@@ -86,15 +82,11 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
             exponent = 1;
         else {
             exponent_str = term.substr(j + 1, term.length() - 1);
-            // std::cout << "exponent_str: " << exponent_str << std::endl;
             exponent = std::atof(exponent_str.c_str());
 
         }
     }
     coefficients[exponent] += sign * coefficient;
-    // std::cout << "Term: " << term << std::endl;
-    // std::cout << "coefficient: " << coefficient << std::endl;
-    // std::cout << "exponent: " << exponent << std::endl;
     return;
 }
 
@@ -111,12 +103,10 @@ int PolynomialSolver::check_term(const std::string& term) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
-// check nb minus and minus pos
     if (nb_minus == -2 || nb_minus > 0) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
-// check nb x or X
     if ((nb_X >= 0 && nb_x >= 0) || nb_x == -2 || nb_X == -2) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
@@ -129,13 +119,10 @@ int PolynomialSolver::check_term(const std::string& term) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
-
-// check nb ^
     if (nb_caret == -2 || nb_caret == static_cast<int>(term.length()) -1) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
-// check pos of ^ compare to X
     if (nb_caret >= 0 && (nb_x_abs == -1 || nb_caret - nb_x_abs != 1)) {
         if (nb_x_abs == -1) {
             std::cout << "Error in term: " << term << std::endl;
@@ -154,7 +141,6 @@ int PolynomialSolver::check_term(const std::string& term) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
-    // check nb . et pos . compare to x
     if (nb_dot == -2 || (nb_dot >= 0 && nb_x_abs >= 0 && (nb_x_abs - nb_dot < 0))) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
@@ -216,23 +202,21 @@ void PolynomialSolver::print_reduce_form() {
         int exponent = it->first;
         double coefficient = it->second;
 
-        if (coefficient != 0) {
-            if (!first) {
-                if (coefficient > 0)
-                    std::cout << " + ";
-                else {
-                    std::cout << " - ";
-                    coefficient = -coefficient;
-                }
+        if (!first) {
+            if (coefficient > 0)
+                std::cout << " + ";
+            else {
+                std::cout << " - ";
+                coefficient = -coefficient;
             }
-            if (exponent == 0)
-                std::cout << coefficient;
-            else if (exponent == 1)
-                std::cout << coefficient << " * X";
-            else
-                std::cout << coefficient << " * X^" << exponent;
-            first = false;
         }
+        if (exponent == 0)
+            std::cout << coefficient;
+        else if (exponent == 1)
+            std::cout << coefficient << " * X";
+        else
+            std::cout << coefficient << " * X^" << exponent;
+        first = false;
         ++it;
     }
     if (!get_polynomial_degree(false) && coefficients[0] == 0)
@@ -282,7 +266,6 @@ void PolynomialSolver::solve_equation() {
     else if (degree == 1) {
         double a = coefficients[1];
         double b = coefficients[0];
-        // std::cout << "a: " << a << " b: " << b << std::endl;
         std::cout << "The solution is:" << std::endl;
         std::cout << CYAN << "x = " << RESET << RED << "-b / a" << RESET << std::endl;
         std::cout << CYAN << "x = " << RESET << RED << "-" << b << " / " << a << RESET << std::endl;
