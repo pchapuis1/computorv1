@@ -137,11 +137,11 @@ int PolynomialSolver::get_polynomial_degree(bool print) {
     }
     else
         max_degree = -1;
-    if (print)
+    if (print && max_degree != 0)
         std::cout << "Polynomial degree: " << max_degree << std::endl;
     return max_degree;
 }
-    
+
 double mySqrt(double delta) {
     if (delta == 1)
         return delta;

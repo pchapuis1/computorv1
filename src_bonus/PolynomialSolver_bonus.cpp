@@ -253,7 +253,7 @@ int PolynomialSolver::get_polynomial_degree(bool print) {
     }
     else
         max_degree = -1;
-    if (print)
+    if (print && max_degree != 0)
         std::cout << GREEN << "Polynomial degree: " << RESET << max_degree << std::endl;
     return max_degree;
 }
