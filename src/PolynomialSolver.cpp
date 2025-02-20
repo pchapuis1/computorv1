@@ -25,7 +25,7 @@ void PolynomialSolver::parse_equation(const std::string& equation) {
 void PolynomialSolver::extract_coefficient(std::string term, int sign) {
     double      coefficient;
     std::string coefficient_str;
-    int         exponent;
+    double      exponent;
     std::string exponent_str;
     size_t i = 0;
 
@@ -40,15 +40,21 @@ void PolynomialSolver::extract_coefficient(std::string term, int sign) {
     while ((term[j] >= '0' && term[j] <= '9')){
         j --;
     }
+    if (term[j] == '-') {
+        std::cout << "Error in exponent: " << term << std::endl;
+        exit(0);
+    }
     exponent_str = term.substr(j + 1, term.length() - 1);
     exponent = std::atof(exponent_str.c_str());
-
+    if (exponent > 2147483647) {
+        std::cout << "Error in exponent: " << term << std::endl;
+        exit(0);
+    }
     coefficients[exponent] += sign * coefficient;
     return;
 }
 
 void PolynomialSolver::get_coefficients(std::string member, int sign) {
-    (void)sign;
     std::vector<std::string> terms;
     std::string member_without_space;
     std::string terme;
@@ -115,11 +121,16 @@ void PolynomialSolver::print_reduce_form() {
 int PolynomialSolver::get_polynomial_degree(bool print) {
     std::map<int, double>::reverse_iterator it;
     int max_degree;
+    bool    empty = true;
 
     if (!coefficients.empty()){
-        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {
+        for (it = coefficients.rbegin(); it != coefficients.rend(); ++it) {
+            if (it->second != 0){
+                empty = false;
+                break;
+            }
         }
-        if (it->first >= static_cast<int>(coefficients.size()))
+        if (empty)
             max_degree = 0;
         else
             max_degree = it->first;
