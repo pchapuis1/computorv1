@@ -144,17 +144,41 @@ double mySqrt(double delta) {
 }
 
 
-std::string get_irreductible_fraction(double nb) {
-    std::string fraction;
-    int i = 1;
+double myAbs(double x) {
+    if (x < 0)
+        return -x;
+    return x;
+}
 
+double round_double(double x) {
+    int intPart = static_cast<int>(x);
+    double fraction = x - intPart;
+    if (fraction >= 0.5) {
+        return intPart + 1;
+    }
+    return intPart;
+}
+
+std::string get_irreductible_fraction(double nb, int return_type) {
+    int i = 1;
     double result = nb * i;
-    while (result % 1 == 0){
-        i ++;
+    
+    while (myAbs(result - round_double(result)) > 1e-9) {
+        i++;
         result = nb * i;
     }
     
-    return fraction;
+    int numerator = static_cast<int>(round_double(result));
+    int denominator = i;
+    
+    std::stringstream fraction;
+    if (return_type == 1)
+        fraction << numerator;
+    else if (return_type == 2)
+        fraction << denominator;
+    else
+        fraction << numerator << "/" << denominator;
+    return fraction.str();
 }
 
 void PolynomialSolver::solve_equation() {
@@ -183,9 +207,8 @@ void PolynomialSolver::solve_equation() {
         
         if (delta < 0) {
             std::cout << "Discriminant is strictly negative, the two complex solutions are:" << std::endl;
-            std::cout << "a: " << a << "b: " << b << "racine de delta: " << mySqrt(-delta) << std::endl;
-            std::cout << get_irreductible_fraction(-b / (2 * a)) << " + i" << get_irreductible_fraction(mySqrt(-delta) / (2 * a)) << std::endl;
-            std::cout << get_irreductible_fraction(-b / (2 * a)) << " - i" << get_irreductible_fraction(mySqrt(-delta) / (2 * a)) << std::endl;
+            std::cout << get_irreductible_fraction(-b / (2 * a), 3) << " + " << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 1) << "i/" << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 2) << std::endl;
+            std::cout << get_irreductible_fraction(-b / (2 * a), 3) << " - " << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 1) << "i/" << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 2) << std::endl;
         }
         else if (delta == 0) {
             std::cout << "The discriminant is null, the unique solution is:" << std::endl << (-b / (2 * a)) << std::endl;
