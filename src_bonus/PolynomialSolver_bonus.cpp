@@ -103,7 +103,7 @@ int PolynomialSolver::check_term(const std::string& term) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
-    if (nb_minus == -2 || nb_minus > 0) {
+    if (nb_minus == -2 || nb_minus > 0 || (nb_minus == 0 && term.size() == 1)) {
         std::cout << "Error in term: " << term << std::endl;
         return 1;
     }
@@ -233,7 +233,10 @@ int PolynomialSolver::get_polynomial_degree(bool print) {
 
     if (!coefficients.empty()){
         for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {}
-        max_degree = it->first;
+        if (it->first >= static_cast<int>(coefficients.size()))
+            max_degree = 0;
+        else
+            max_degree = it->first;
     }
     else
         max_degree = -1;

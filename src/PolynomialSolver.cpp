@@ -117,8 +117,12 @@ int PolynomialSolver::get_polynomial_degree(bool print) {
     int max_degree;
 
     if (!coefficients.empty()){
-        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {}
-        max_degree = it->first;
+        for (it = coefficients.rbegin(); it != coefficients.rend() && it->second == 0; ++it) {
+        }
+        if (it->first >= static_cast<int>(coefficients.size()))
+            max_degree = 0;
+        else
+            max_degree = it->first;
     }
     else
         max_degree = -1;
