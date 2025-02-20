@@ -108,8 +108,8 @@ void PolynomialSolver::print_reduce_form() {
         first = false;
         ++it;
     }
-    if (!get_polynomial_degree(false) && coefficients[0] == 0)
-        std::cout << "0";
+    // if (!get_polynomial_degree(false) && coefficients[0] == 0)
+    //     std::cout << "0";
     std::cout << " = 0" << std::endl;
     return ;
 }
@@ -143,6 +143,20 @@ double mySqrt(double delta) {
     return result;
 }
 
+
+std::string get_irreductible_fraction(double nb) {
+    std::string fraction;
+    int i = 1;
+
+    double result = nb * i;
+    while (result % 1 == 0){
+        i ++;
+        result = nb * i;
+    }
+    
+    return fraction;
+}
+
 void PolynomialSolver::solve_equation() {
     int degree = get_polynomial_degree(true);
 
@@ -150,8 +164,12 @@ void PolynomialSolver::solve_equation() {
         std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
         return ;
     }
-    if (degree == 0)
-        std::cout << "There is an infinity of solution." << std::endl;
+    if (degree == 0){
+        if (coefficients[0] == 0)
+            std::cout << "Any real number is a solution." << std::endl;
+        else
+            std::cout << "No solution." << std::endl;
+    }
     else if (degree == 1) {
         double a = coefficients[1];
         double b = coefficients[0];
@@ -164,7 +182,10 @@ void PolynomialSolver::solve_equation() {
         double delta = b * b - 4 * a * c;
         
         if (delta < 0) {
-            std::cout << "The discriminant is negative, there is no solutions." << std::endl;
+            std::cout << "Discriminant is strictly negative, the two complex solutions are:" << std::endl;
+            std::cout << "a: " << a << "b: " << b << "racine de delta: " << mySqrt(-delta) << std::endl;
+            std::cout << get_irreductible_fraction(-b / (2 * a)) << " + i" << get_irreductible_fraction(mySqrt(-delta) / (2 * a)) << std::endl;
+            std::cout << get_irreductible_fraction(-b / (2 * a)) << " - i" << get_irreductible_fraction(mySqrt(-delta) / (2 * a)) << std::endl;
         }
         else if (delta == 0) {
             std::cout << "The discriminant is null, the unique solution is:" << std::endl << (-b / (2 * a)) << std::endl;
