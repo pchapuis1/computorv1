@@ -108,8 +108,6 @@ void PolynomialSolver::print_reduce_form() {
         first = false;
         ++it;
     }
-    // if (!get_polynomial_degree(false) && coefficients[0] == 0)
-    //     std::cout << "0";
     std::cout << " = 0" << std::endl;
     return ;
 }
@@ -143,20 +141,20 @@ double mySqrt(double delta) {
     return result;
 }
 
-
 double myAbs(double x) {
     if (x < 0)
         return -x;
     return x;
 }
 
-double round_double(double x) {
-    int intPart = static_cast<int>(x);
-    double fraction = x - intPart;
+double round_double(double nb) {
+    int intNb = static_cast<int>(nb);
+    double fraction = nb - intNb;
+
     if (fraction >= 0.5) {
-        return intPart + 1;
+        return intNb + 1;
     }
-    return intPart;
+    return intNb;
 }
 
 std::string get_irreductible_fraction(double nb, int return_type) {
@@ -169,15 +167,14 @@ std::string get_irreductible_fraction(double nb, int return_type) {
     }
     
     int numerator = static_cast<int>(round_double(result));
-    int denominator = i;
     
     std::stringstream fraction;
     if (return_type == 1)
         fraction << numerator;
     else if (return_type == 2)
-        fraction << denominator;
+        fraction << i;
     else
-        fraction << numerator << "/" << denominator;
+        fraction << numerator << "/" << i;
     return fraction.str();
 }
 
@@ -185,19 +182,19 @@ void PolynomialSolver::solve_equation() {
     int degree = get_polynomial_degree(true);
 
     if (degree > 2){
-        std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
+        std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl << std::endl;
         return ;
     }
     if (degree == 0){
         if (coefficients[0] == 0)
-            std::cout << "Any real number is a solution." << std::endl;
+            std::cout << "Any real number is a solution." << std::endl << std::endl;
         else
-            std::cout << "No solution." << std::endl;
+            std::cout << "No solution." << std::endl << std::endl;
     }
     else if (degree == 1) {
         double a = coefficients[1];
         double b = coefficients[0];
-        std::cout << "The solution is:" << std::endl << -b / a << std::endl;
+        std::cout << "The solution is:" << std::endl << -b / a << std::endl << std::endl;
     }
     else if (degree == 2) {
         double a = coefficients[2];
@@ -208,15 +205,15 @@ void PolynomialSolver::solve_equation() {
         if (delta < 0) {
             std::cout << "Discriminant is strictly negative, the two complex solutions are:" << std::endl;
             std::cout << get_irreductible_fraction(-b / (2 * a), 3) << " + " << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 1) << "i/" << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 2) << std::endl;
-            std::cout << get_irreductible_fraction(-b / (2 * a), 3) << " - " << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 1) << "i/" << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 2) << std::endl;
+            std::cout << get_irreductible_fraction(-b / (2 * a), 3) << " - " << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 1) << "i/" << get_irreductible_fraction(mySqrt(-delta) / (2 * a), 2) << std::endl << std::endl;
         }
         else if (delta == 0) {
-            std::cout << "The discriminant is null, the unique solution is:" << std::endl << (-b / (2 * a)) << std::endl;
+            std::cout << "The discriminant is null, the unique solution is:" << std::endl << (-b / (2 * a)) << std::endl << std::endl;
         }
         else {
             std::cout << "Discriminant is strictly positive, the two solutions are:" << std::endl;
             std::cout << (-b - mySqrt(delta)) / (2 * a) << std::endl;
-            std::cout << (-b + mySqrt(delta)) / (2 * a) << std::endl;
+            std::cout << (-b + mySqrt(delta)) / (2 * a) << std::endl << std::endl;
         }
     }
     return;
